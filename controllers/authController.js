@@ -42,7 +42,7 @@ const register = async (req, res, next) => {
     });
 
     // Generate verification URL
-    const verifyUrl = `http://${process.env.CLIENT_URL}/verify/${verifyToken}`;
+    const verifyUrl = `${process.env.CLIENT_URL}/verify/${verifyToken}`;
 
     // Create HTML content
     const htmlContent = `
