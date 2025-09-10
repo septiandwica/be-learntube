@@ -10,13 +10,13 @@ const passport = require("passport");
 // Passport config
 require("./config/passport")(passport);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 // Init
 const app = express();
 app.use(
   cors({
-    origin: `http://${process.env.CLIENT_URL}`,
+    origin: process.env.CLIENT_URL,
     credentials: true,
   })
 );
