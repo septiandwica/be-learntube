@@ -1,0 +1,595 @@
+{
+  "info": {
+    "_postman_id": "7a7d67c8-e0fa-4be0-adbb-92b30108d24a",
+    "name": "LearnTube API",
+    "description": "API Documentation for LearnTube Learning Path Platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "24829911"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Budi\",\n    \"email\": \"budi@example.com\",\n    \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Register user baru dan kirim email verifikasi (Rate limited: 5 requests/15 minutes)\n\nResponse:\n- 201: User berhasil dibuat\n- 400: Email sudah terdaftar atau field tidak lengkap\n- 500: Server error"
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"budi@example.com\",\n    \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login user dan dapatkan token JWT (Rate limited: 5 requests/15 minutes)\n\nResponse:\n- 200: Login berhasil, returns JWT token\n- 401: Email/password salah\n- 403: Akun belum ter-approve\n- 500: Server error"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "profile"]
+            },
+            "description": "Mendapatkan data profil user yang sedang login\n\nResponse:\n- 200: Returns user profile data\n- 401: Not authenticated\n- 500: Server error"
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Email",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/verify/{{verify_token}}",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "verify", "{{verify_token}}"]
+            },
+            "description": "Verifikasi email user berdasarkan token\n\nResponse:\n- 200: Email berhasil diverifikasi\n- 400: Token tidak valid atau expired\n- 500: Server error"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoint untuk autentikasi dan verifikasi user"
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": ["{{base_url}}"],
+              "path": ["users"]
+            },
+            "description": "Mendapatkan semua user (Admin only)\n\nResponse:\n- 200: Returns list of all users\n- 401: Not authenticated\n- 403: Not authorized (non-admin)\n- 500: Server error"
+          },
+          "response": []
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["users", "{{user_id}}"]
+            },
+            "description": "Mendapatkan user berdasarkan ID (Admin atau User itu sendiri)\n\nResponse:\n- 200: Returns user data\n- 401: Not authenticated\n- 403: Not authorized\n- 404: User tidak ditemukan\n- 500: Server error"
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Budi Update\",\n    \"email\": \"budi@baru.com\",\n    \"role\": \"user\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["users", "{{user_id}}"]
+            },
+            "description": "Update user (Admin atau user itu sendiri)\n\nResponse:\n- 200: User berhasil diupdate\n- 401: Not authenticated\n- 403: Not authorized\n- 404: User tidak ditemukan\n- 500: Server error"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["users", "{{user_id}}"]
+            },
+            "description": "Menghapus user (Admin only)\n\nResponse:\n- 200: User berhasil dihapus\n- 401: Not authenticated\n- 403: Not authorized (non-admin)\n- 404: User tidak ditemukan\n- 500: Server error"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoint untuk manajemen user (Admin access required)"
+    },
+    {
+      "name": "Playlists",
+      "item": [
+        {
+          "name": "Create Playlist",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"JavaScript Learning Path\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/playlist/create",
+              "host": ["{{base_url}}"],
+              "path": ["playlist", "create"]
+            },
+            "description": "Membuat playlist baru (Max 10 playlists per user)\n\nResponse:\n- 201: Playlist berhasil dibuat\n- 400: Sudah mencapai batas maksimum playlist\n- 401: Not authenticated\n- 500: Server error"
+          },
+          "response": []
+        },
+        {
+          "name": "Search YouTube Videos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/playlist/search?q={{search_query}}",
+              "host": ["{{base_url}}"],
+              "path": ["playlist", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "{{search_query}}",
+                  "description": "Query pencarian video YouTube"
+                }
+              ]
+            },
+            "description": "Mencari video dari YouTube API\n\nResponse:\n- 200: Returns daftar video\n- 400: Query pencarian diperlukan\n- 401: Not authenticated\n- 500: Gagal mengambil data dari YouTube"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Roadmap",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Beginner\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/playlist/create-roadmap/{{playlist_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["playlist", "create-roadmap", "{{playlist_id}}"]
+            },
+            "description": "Membuat roadmap baru dalam playlist (Owner atau Admin only)\n\nResponse:\n- 201: Roadmap berhasil dibuat\n- 400: Roadmap dengan judul ini sudah ada\n- 401: Not authenticated\n- 403: Not authorized\n- 404: Playlist tidak ditemukan\n- 500: Server error"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Roadmaps",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/playlist/roadmap/{{playlist_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["playlist", "roadmap", "{{playlist_id}}"]
+            },
+            "description": "Mengambil semua roadmap dari playlist\n\nResponse:\n- 200: Returns daftar roadmap\n- 401: Not authenticated\n- 404: Playlist tidak ditemukan\n- 500: Server error"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Roadmap Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/playlist/roadmap/{{playlist_id}}/{{roadmap_id}}",
+              "host": ["{{base_url}}"],
+              "path": [
+                "playlist",
+                "roadmap",
+                "{{playlist_id}}",
+                "{{roadmap_id}}"
+              ]
+            },
+            "description": "Mengambil detail roadmap tertentu\n\nResponse:\n- 200: Returns detail roadmap\n- 401: Not authenticated\n- 404: Playlist atau roadmap tidak ditemukan\n- 500: Server error"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Roadmap",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"roadmapId\": \"{{roadmap_id}}\",\n    \"newTitle\": \"Beginner Level\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/playlist/update-roadmap/{{playlist_id}}/{{roadmap_id}}",
+              "host": ["{{base_url}}"],
+              "path": [
+                "playlist",
+                "update-roadmap",
+                "{{playlist_id}}",
+                "{{roadmap_id}}"
+              ]
+            },
+            "description": "Memperbarui roadmap (Owner atau Admin only)\n\nResponse:\n- 200: Roadmap berhasil diupdate\n- 401: Not authenticated\n- 403: Not authorized\n- 404: Playlist atau roadmap tidak ditemukan\n- 500: Server error"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Roadmap",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/playlist/delete-roadmap/{{playlist_id}}/{{roadmap_id}}",
+              "host": ["{{base_url}}"],
+              "path": [
+                "playlist",
+                "delete-roadmap",
+                "{{playlist_id}}",
+                "{{roadmap_id}}"
+              ]
+            },
+            "description": "Menghapus roadmap (Owner atau Admin only)\n\nResponse:\n- 200: Roadmap berhasil dihapus\n- 401: Not authenticated\n- 403: Not authorized\n- 404: Playlist atau roadmap tidak ditemukan\n- 500: Server error"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Video to Roadmap",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"videoData\": {\n        \"videoId\": \"xyz123\",\n        \"videoTitle\": \"JavaScript Tutorial for Beginners\",\n        \"videoUrl\": \"https://www.youtube.com/watch?v=xyz123\"\n    }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/playlist/add-video/{{playlist_id}}/{{roadmap_id}}",
+              "host": ["{{base_url}}"],
+              "path": [
+                "playlist",
+                "add-video",
+                "{{playlist_id}}",
+                "{{roadmap_id}}"
+              ]
+            },
+            "description": "Menambahkan video ke roadmap (Max 3 videos per roadmap)\n\nResponse:\n- 200: Video berhasil ditambahkan\n- 400: Sudah mencapai batas maksimum video\n- 401: Not authenticated\n- 404: Playlist tidak ditemukan\n- 500: Server error"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Video from Roadmap",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"videoId\": \"xyz123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/playlist/delete-video/{{playlist_id}}/{{roadmap_id}}/{{video_id}}",
+              "host": ["{{base_url}}"],
+              "path": [
+                "playlist",
+                "delete-video",
+                "{{playlist_id}}",
+                "{{roadmap_id}}",
+                "{{video_id}}"
+              ]
+            },
+            "description": "Menghapus video dari roadmap\n\nResponse:\n- 200: Video berhasil dihapus\n- 401: Not authenticated\n- 404: Video tidak ditemukan\n- 500: Server error"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Video Progress",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"videoId\": \"xyz123\",\n    \"progress\": \"Completed\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/playlist/update-progress/{{playlist_id}}/{{roadmap_id}}",
+              "host": ["{{base_url}}"],
+              "path": [
+                "playlist",
+                "update-progress",
+                "{{playlist_id}}",
+                "{{roadmap_id}}"
+              ]
+            },
+            "description": "Memperbarui progress video (In Progress/Completed)\n\nResponse:\n- 200: Progress berhasil diupdate\n- 401: Not authenticated\n- 404: Video tidak ditemukan\n- 500: Server error"
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Playlists",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/playlist/user",
+              "host": ["{{base_url}}"],
+              "path": ["playlist", "user"]
+            },
+            "description": "Mendapatkan semua playlist user\n\nResponse:\n- 200: Returns daftar playlist user\n- 401: Not authenticated\n- 500: Server error"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Playlist",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Updated JavaScript Learning Path\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/playlist/update-playlist/{{playlist_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["playlist", "update-playlist", "{{playlist_id}}"]
+            },
+            "description": "Mengupdate playlist (Owner atau Admin only)\n\nResponse:\n- 200: Playlist berhasil diupdate\n- 401: Not authenticated\n- 403: Not authorized\n- 404: Playlist tidak ditemukan\n- 500: Server error"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Playlist",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/playlist/delete-playlist/{{playlist_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["playlist", "delete-playlist", "{{playlist_id}}"]
+            },
+            "description": "Menghapus playlist (Owner atau Admin only)\n\nResponse:\n- 200: Playlist berhasil dihapus\n- 401: Not authenticated\n- 403: Not authorized\n- 404: Playlist tidak ditemukan\n- 500: Server error"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoint untuk manajemen playlist dan roadmap"
+    },
+    {
+      "name": "Documentation",
+      "item": [
+        {
+          "name": "Get API Documentation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            },
+            "description": "Mendapatkan dokumentasi API dalam format HTML"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoint untuk dokumentasi API"
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:2025",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YmY4Yzk3NzRkYzBhYzc2YzcyOTY4MiIsImlhdCI6MTc1NzQwMDM4NywiZXhwIjoxNzU4MDA1MTg3fQ.U55XUzw4BMbYF2GgKV1ep7B30Vrru7REQFdD5osepgY",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "68bf8c9774dc0ac76c729682",
+      "type": "string"
+    },
+    {
+      "key": "verify_token",
+      "value": "verification_token_here",
+      "type": "string"
+    },
+    {
+      "key": "playlist_id",
+      "value": "68bfcdf50b99dd05b8c91248",
+      "type": "string"
+    },
+    {
+      "key": "roadmap_id",
+      "value": "68bfd05fa0dc9ce23c18da9a",
+      "type": "string"
+    },
+    {
+      "key": "search_query",
+      "value": "javascript tutorial",
+      "type": "string"
+    },
+    {
+      "key": "video_id",
+      "value": "xyz123",
+      "type": "string"
+    }
+  ]
+}
